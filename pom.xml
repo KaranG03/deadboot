@@ -95,11 +95,7 @@
 			</dependency>
 
 			<!-- JWT (If needed for authentication) -->
-			<dependency>
-				<groupId>io.jsonwebtoken</groupId>
-				<artifactId>jjwt</artifactId>
-				<version>0.11.5</version>
-			</dependency>
+			
 		</dependencies>
 
 
