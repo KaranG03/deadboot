@@ -40,9 +40,11 @@ public class DisplayRecommended {
         }
         User user = userOptional.get();
 
-        Set<String> objectIds = new LinkedHashSet<>();
+        // Get existing set of ObjectIds
+        Set<ObjectId> objectIds2 = user.getObjs();
         Random rand = new Random();
 
+        // Iterate over user categories and process products
         for (String category : user.getCategories()) {
             List<Product> l1 = productRepository.findBycategory(category);
 
@@ -52,36 +54,35 @@ public class DisplayRecommended {
                 System.out.println("Product ID: " + product.getId().toString());
             }
 
-            for (int c = 0; c < Math.min(l1.size(), 3); c++) {
-                String productId = l1.get(c).getId().toString(); // Convert ObjectId to String
+            // Process each product in the list
+            for (Product product : l1) {
+                ObjectId productId = product.getId(); // Directly use ObjectId
 
-                // Check if ObjectId is already in the set to ensure uniqueness
-                if (!objectIds.contains(productId)) {
+                // Add product's ObjectId to the set if it's not already present in the user's existing set
+                if (!objectIds2.contains(productId)) {
                     System.out.println("Adding ObjectId: " + productId);
-                    objectIds.add(productId); // Store only the String representation of ObjectId to ensure uniqueness
+                    objectIds2.add(productId); // Add ObjectId directly to the set
                 } else {
                     System.out.println("Duplicate ObjectId detected: " + productId);
                 }
             }
         }
 
-// Retrieve products using the stored ObjectIds (now in String form)
-        List<Product> toAdd = new ArrayList<>();
-        for (String objectIdStr : objectIds) {
-            ObjectId objectId = new ObjectId(objectIdStr); // Convert String back to ObjectId
+        // Fetch products using the stored ObjectIds (in the user's objs set)
+        List<Product> products = new ArrayList<>();
+        for (ObjectId objectId : objectIds2) {
             Optional<Product> productOptional = productRepository.findById(objectId);
-            productOptional.ifPresent(toAdd::add); // Add product to the list if it exists
+            productOptional.ifPresent(products::add); // Add product to list if it exists
         }
 
-// Shuffle the products list
-        Collections.shuffle(toAdd, rand);
+        // Shuffle the products list (optional)
+        Collections.shuffle(products, rand);
 
-// Add shuffled products to user's featured products list
-        user.getFeaturedProd().addAll(toAdd);
-        userRepo.save(user); // Save the updated user object
+        // Save the updated user object with the updated obj set
+        user.setObjs(objectIds2); // Ensure the ObjectId set is saved
+        userRepo.save(user);
 
-// Return the updated list of featured products
-        return new ResponseEntity<>(user.getFeaturedProd(), HttpStatus.OK);
-
+        // Return the updated list of products
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 }
