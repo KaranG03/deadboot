@@ -34,9 +34,10 @@ public class User {
     private String resetPasswordToken;
 
     private Date resetPasswordExpire;
-    private List<Product> featuredProd = new ArrayList<>();
+    //private List<Product> featuredProd = new ArrayList<>();
     private Set<ObjectId> votedProd = new HashSet<>();
     private List<String> categories = new ArrayList<>();
+    private Set<ObjectId> objs = new LinkedHashSet<>();
 
     private int primeStatus;
 }
