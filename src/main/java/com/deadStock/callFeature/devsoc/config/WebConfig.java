@@ -18,7 +18,8 @@ public class WebConfig implements  WebMvcConfigurer{
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow CORS for all endpoints
-                        .allowedOrigins("http://localhost:3000") // Allowed origins
+                        .allowedOrigins("https://deadstock-by-divyansh.up.railway.app/") // Allowed origins
+                        .allowedOrigins("http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allowed HTTP methods
                         .allowedHeaders("*") // Allow all headers
                         .allowCredentials(true); // Allow cookies/credentials
